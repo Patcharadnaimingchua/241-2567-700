@@ -13,7 +13,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - weblab830
+      - weblab820
     restart: always
 
   phpmyadmin:
@@ -24,8 +24,9 @@ services:
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: root
+
     ports:
-      - "8821:80"
+      - "8831:80"
     depends_on:
       - db
     networks:
