@@ -1,116 +1,90 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const mysql = require('mysql2/promise');
-const cors = require('cors');
-const app = express();
-
-const port = 8000;
-app.use(bodyParser.json());
-app.use(cors());
-
-let users = []
-let conn = null
-
-const initMySQL = async () => {
-  conn = await mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'root',
-    database: 'webdb',
-    port: 8830
-  })
+const validateData = (userData) => {
+    let errors = [];
+    if (!userData.firstname) {
+        errors.push('กรุณากรอกชื่อ');
+    }
+    if (!userData.lastname) {
+        errors.push('กรุณากรอกนามสกุล');
+    }
+    if (!userData.age) {
+        errors.push('กรุณากรอกอายุ');
+    }
+    if (!userData.gender) {
+        errors.push('กรุณาเลือกเพศ');
+    }
+    if (!userData.interests) {
+        errors.push('กรุณาเลือกความสนใจ');
+    }
+    if (!userData.description) {
+        errors.push('กรุณากรอกคำอธิบาย');
+    }
+    return errors;
 }
 
-// path = GET / users สำหรับ get users ทั้งหมดที่บันทึกไว้
-app.get('/users', async (req, res) => {
-    const results = await conn.query('SELECT * FROM users')
-    res.json(results[0])
-})
+const submitData = async () => {
+    let firstnameDOM = document.querySelector('input[name=firstname]');
+    let lastnameDOM = document.querySelector('input[name=lastname]');
+    let ageDOM = document.querySelector('input[name=age]');
+    let genderDOM = document.querySelector('input[name=gender]:checked') || {};
+    let interestDOM = document.querySelectorAll('input[name=interest]:checked') || {};
+    let descriptionDOM = document.querySelector('textarea[name=description]');
+    let messageDOM = document.getElementById('message');
 
-// path = POST / user สำหรับสร้าง users ใหม่บันทึกเข้าไป
-app.post('/users', async (req, res) => {
-   
-    try{
-        let user = req.body;
-        const results = await conn.query('INSERT INTO users SET ?', user)
-        res.json({
-            message: 'Create user successfully',
-            data: results[0]
-        })
-    }catch(error){
-        console.error('error: ', error.message)
-        res.status(500).json({
-            message: 'something went wrong',
-            errorMessage: error.message
-        })
+    try {
+        let interest = '';
+        for (let i = 0; i < interestDOM.length; i++) {
+            interest += interestDOM[i].value;
+            if (i != interestDOM.length - 1) {
+                interest += ',';
+            }
+        }
+
+        let userData = {
+            firstname: firstnameDOM.value,
+            lastname: lastnameDOM.value,
+            age: ageDOM.value,
+            gender: genderDOM.value,
+            description: descriptionDOM.value,
+            interests: interest
+        };
+
+        console.log('submitData', userData);
+
+        const errors = validateData(userData);  // ตรวจสอบข้อมูล
+
+        if (errors.length > 0) {
+            throw { 
+                message: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+                errors: errors 
+            };
+        }
+
+        const response = await axios.post('http://localhost:8000/user', userData);
+        console.log('response', response.data);
+        messageDOM.innerText = 'บันทึกข้อมูลเรียบร้อย';
+        messageDOM.className = 'message success';
+
+    } catch (error) {
+        console.log('error', error.message);
+        console.log('error', error.errors);
+
+        // ถ้ามี error.response
+        if (error.response) {
+            console.log('error.response', error.response.data.message);
+            error.message = error.response.data.message;
+            error.errors = error.response.data.errors;
+        }
+
+        let htmlData = '<div>';
+        htmlData += `<div>${error.message}</div>`;
+        htmlData += '<ul>';
+        for (let i = 0; i < error.errors.length; i++) {
+            htmlData += `<li>${error.errors[i]}</li>`;
+        }
+        htmlData += '</ul>';
+        htmlData += '</div>';
+
+        messageDOM.innerHTML = htmlData;  
+        messageDOM.className = 'message danger';
     }
-})
-
-
- // path = GET / users /: id สำหรับดึง users รายคนออกมา
-// path = GET / users /: id สำหรับดึง users รายคนออกมา
-app.get('/users/:id', async (req, res) => {
-  try {
-  let id = req.params.id;
-  const result = await conn.query('SELECT * FROM user WHERE id = ?', id)
-  if (result[0].length == 0) {
-    throw { statuscode: 404, message: 'User not found' }
-    }
-    res.json(result[0][0])
-  } catch (error) {
-      console.log('error', error.message)
-      let statusCode = error.statusCode || 500
-      res.status(500).json({ 
-      message: 'something went wrong',
-      errorMessage: error.message
-    })
-  }
-})
-   
- // path = PUT /user/:id สำหรับดึง users รายคน (ตาม id ที่บันทึกเข้าไป)
- app.put('/users/:id',async (req, res) => {
-  try {
-    let id = req.params.id;
-    let updateUser = req.body;
-    const results = await conn.query
-    ('UPDATE user SET? WHERE id = ?',
-       [updateUser, id]
-      )
-    res.json({
-      message: 'Create user successfully',
-      data: results[0]
-   })
-  }catch (error) {
-    console.log('error', error.message)
-    res.status(500).json({
-      message:'something went wrong',
-      errorMessage: error.message
-    })
-  }
-})
-
-
-
- //path = DELETE /users/:id สำหรับลบ users รายคน (ตาม id ที่บันทึกเข้าไป)
- app.delete('/users/:id', async (req, res) => {
-  try {
-    let id = req.params.id;
-    const results = await conn.query(
-      'DELETE from user WHERE id = ?', id)
-    res.json({
-      message: 'Delete user successfully',
-      data: results[0]
-   })
-  } catch (error) {
-    console.log('error', error.message)  
-    res.status(500).json({
-      message: 'something went wrong',
-      errorMessage: error.message  
-     })
-   }
-});
-
-app.listen(port, async (req, res) => {  
-  await initMySQL()
-  console.log('Http Server is running on port ' + port);
-});
+};
