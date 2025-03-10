@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 
 services:
   db:
@@ -24,7 +24,6 @@ services:
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: root
-
     ports:
       - "8831:80"
     depends_on:
