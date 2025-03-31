@@ -1,0 +1,153 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f9; /* สีพื้นหลังอ่อนให้ความรู้สึกสะอาดและหรูหรา */
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #f4f4f9, #e0e5ec); /* เพิ่มการไล่สีแบบละเอียด */
+    font-size: 16px;
+}
+
+/* Container for Form */
+.container {
+    background-color: #ffffff;
+    padding: 40px 50px;
+    border-radius: 20px; /* มุมมนสวยงาม */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);  /* เงาลึกและละเอียด */
+    width: 100%;
+    max-width: 600px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* เพิ่มการเคลื่อนไหวของ container เมื่อ hover */
+.container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+/* Header Styling */
+.header {
+    font-size: 28px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #34495e;  /* สีเข้มสำหรับความหรูหรา */
+    letter-spacing: 1px;  /* การเว้นระยะตัวอักษร */
+}
+
+/* Form Input Fields */
+.form,
+textarea {
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;  /* มุมมน */
+    transition: all 0.3s ease;
+    outline: none;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.form:focus,
+textarea:focus {
+    border-color: #3498db; /* สีฟ้าหรูหราเมื่อ focus */
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+}
+
+/* Buttons */
+button {
+    background-color: #2c3e50;  /* สีเข้มให้ความรู้สึกหรูหรา */
+    color: white;
+    padding: 12px 24px;
+    font-size: 18px;
+    border: none;
+    border-radius: 30px;  /* รูปทรงปุ่มกลม */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ปุ่มเมื่อ hover */
+button:hover {
+    background-color: #34495e;
+    transform: translateY(-4px);
+}
+
+/* ปุ่มเมื่อคลิก */
+button:active {
+    background-color: #2c3e50;
+    transform: translateY(2px);
+}
+
+/* Link Button */
+.btn {
+    display: inline-block;
+    text-decoration: none;
+    background-color: #3498db;  /* สีฟ้าให้ความรู้สึกหรูหรา */
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    text-align: center;
+    font-size: 18px;
+    width: 100%;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ปุ่ม Link เมื่อ hover */
+.btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-4px);
+}
+
+/* ปุ่ม Link เมื่อคลิก */
+.btn:active {
+    background-color: #1f638e;
+    transform: translateY(2px);
+}
+
+/* Message Area */
+.message {
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #e74c3c;
+    text-align: center;
+}
+
+/* Center Align Content */
+.center {
+    text-align: center;
+}
+
+/* Responsive Design for Mobile */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+        width: 100%;
+    }
+
+    .header {
+        font-size: 24px;
+    }
+
+    .form,
+    textarea {
+        font-size: 14px;
+    }
+
+    button, .btn {
+        font-size: 16px;  /* ปรับขนาดฟอนต์ */
+    }
+}
